@@ -268,3 +268,33 @@ exports.putOrders = (req, res) => {
     }
   });
 };
+
+exports.getProfile = (req, res) => {
+  const { user_id } = req.params;
+
+  User.findOne({
+    where: { id: user_id },
+    attributes: { exclude: ["createdAt", "updatedAt"] }
+  }).then(data => {
+    res.send(data);
+  });
+};
+
+exports.putProfile = (req, res) => {
+  const { user_id } = req.params;
+  const avatarURI = process.env.BASE_URL + req.file.path;
+
+  User.update(
+    { avatarURI },
+    {
+      where: { id: user_id }
+    }
+  ).then(() => {
+    User.findOne({
+      where: { id: user_id },
+      attributes: { exclude: ["createdAt", "updatedAt"] }
+    }).then(data => {
+      res.send(data);
+    });
+  });
+};
